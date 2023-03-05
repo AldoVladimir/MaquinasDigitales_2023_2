@@ -15,15 +15,21 @@ void setup() {
 
 void loop() {
 
-    /* Ok, pero no es escalable
-    Serial.print(bmp.readTemperature());
-    Serial.print(",");
-    Serial.println(bmp.readPressure()/1000); //kPa
-    */
-  sprintf(payload,"%6.2f,%3.2f,%1.6f",
-          bmp.readPressure(),
-          bmp.readTemperature(),
-          3.141592);
+  /* Ok, pero no es escalable
+  Serial.print(bmp.readTemperature());
+  Serial.print(",");
+  Serial.println(bmp.readPressure()/1000); //kPa
+  */
+
+  //Guardar las lecturas en 
+  float pressure = bmp.readPressure();
+  float temperature = bmp.readTemperature();
+
+
+  //Hacer el payload de lecturas de sensores
+  sprintf(payload,"%6.2f,%3.2f",
+          pressure,
+          temperature);
 
   Serial.println(payload);
   //mandar_a_sd(payload);

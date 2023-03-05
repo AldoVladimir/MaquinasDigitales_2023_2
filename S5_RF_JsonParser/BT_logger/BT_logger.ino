@@ -31,11 +31,16 @@ void setup() {
 
 void loop() {
 
+  //Guardar las lecturas en 
+  float pressure = bmp.readPressure();
+  float temperature = bmp.readTemperature();
+  int luminosity = analogRead(LDR_PIN);
+
   //Hacer el payload de lecturas de sensores
   sprintf(payload,"%6.2f,%3.2f,%d",
-          bmp.readPressure(),
-          bmp.readTemperature(),
-          analogRead(LDR_PIN));
+          pressure,
+          temperature,
+          luminosity);
 
   digitalWrite(LED_PIN,HIGH);
     SerialBT.println(payload);
