@@ -46,8 +46,8 @@ WiFiClientSecure espClient;
 PubSubClient client(espClient);
 
 //Configuración de BME y LED
-#define PIN_LED 32
-#define PIN_LDR 34
+#define PIN_LED 33
+#define PIN_LDR 35
 Adafruit_BMP280 bmp;
 
 //Conectar a red Wifi
@@ -140,7 +140,7 @@ void setup() {
     
   //*****************************
   // Cert leer archivo
-  File file4 = SPIFFS.open("/c480-certificate.pem.crt", FILE_READ);
+  File file4 = SPIFFS.open("/3db6-certificate.pem.crt", FILE_READ);
   if (!file4) {
     Serial.println("No se pudo abrir el archivo para leerlo");
     return;
@@ -152,7 +152,7 @@ void setup() {
     
   //***************************************
   //Privatekey leer archivo
-  File file6 = SPIFFS.open("/c480-private.pem.key", FILE_READ);
+  File file6 = SPIFFS.open("/3db6-private.pem.key", FILE_READ);
   if (!file6) {
     Serial.println("No se pudo abrir el archivo para leerlo");
     return;
