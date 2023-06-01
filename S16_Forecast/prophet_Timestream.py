@@ -21,22 +21,23 @@ from datetime import datetime,timedelta
 # where measure_name = 'temp_C'
 # 	and time between ago(30d) and now()
 #order by time desc"""
-query = """select time,
+days_ago = 8 #Número de días a restar de la fecha de hoy para visualización y subconjunto de datos
+
+query = f"""select time,
 	  measure_value::double as temperatura_c
 from atmosfera_axolote.axolote_oscar_qa
 where measure_name = 'press_hPa'
-	and time between ago(30d) and now()
+	and time between ago({days_ago}d) and now()
 order by time desc"""
 
 df = wr.timestream.query(query)
 # %% Previsualizar
 
-#variable = "ligh_adim"
-df.plot(y = 1, x = 0, xlim = [datetime(2023,5,22),datetime(2023,5,30)])
+df.plot(y = 1, x = 0, xlim = [datetime.today() - timedelta(days = days_ago),datetime.today()])
 #Subsetting para tener información manejable
 #Resampling para tener una frecuencia de discretización constante
 #Rolling para eliminar transiciones de alta frecuencia
-df_subset = df[df.iloc[:,0]>(datetime.today()-timedelta(days = 8))]
+df_subset = df[df.iloc[:,0]>(datetime.today()-timedelta(days = days_ago))]
 df_subset.set_index('time',inplace= True)
 df_resamp = df_subset.resample('10min').mean().interpolate()
 df_rolling = df_resamp.rolling(5).mean()
@@ -54,3 +55,13 @@ m = Prophet(changepoint_prior_scale=0.001).fit(df_prophet)
 future = m.make_future_dataframe(periods=12, freq='H')
 fcst = m.predict(future)
 fig = m.plot(fcst)
+
+# %% Escribir predicción en S3
+wr.s3.to_parquet(
+    df = fcst,
+    path = 's3://predicciones-prophet-aldo/predictions_prophet.parquet.gzip',
+    compression = 'gzip'
+)
+
+
+
